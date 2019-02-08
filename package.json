@@ -1,0 +1,25 @@
+{
+  "name": "MySQL-StoreManager",
+  "version": "1.0.0",
+  "description": "## Built With: * Programming Language: Javascript * Run-time environment: Node.js * Database: MySQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/troynwynn/MySQL-StoreManager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/troynwynn/MySQL-StoreManager/issues"
+  },
+  "homepage": "https://github.com/troynwynn/MySQL-StoreManager#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^6.2.2",
+    "mysql": "^2.16.0"
+  }
+}
