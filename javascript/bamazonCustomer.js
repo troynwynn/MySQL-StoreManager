@@ -1,20 +1,8 @@
-// 5. Then create a Node application called `bamazonCustomer.js`. Running this application will first display all of the items available for sale. Include the ids, names, and prices of products for sale. (complete)
-
-// 6. The app should then prompt users with two messages.
-
-//    * The first should ask them the ID of the product they would like to buy.
-//    * The second message should ask how many units of the product they would like to buy.
-
-// 7. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
-
-//    * If not, the app should log a phrase like `Insufficient quantity!`, and then prevent the order from going through.
-
-// 8. However, if your store _does_ have enough of the product, you should fulfill the customer's order.
-//    * This means updating the SQL database to reflect the remaining quantity.
-//    * Once the update goes through, show the customer the total cost of their purchase.
-
 const mysql = require('mysql');
 const inquirer = require('inquirer');
+
+var currentBasket = [];
+var total = 0;
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -26,30 +14,135 @@ var connection = mysql.createConnection({
     user: "root",
   
     // Your password
-    password: "itsnotthecat'12",
+    password: "yourRootPassword",
     database: "bamazon"
   });
   
   connection.connect(function(err) {
     if (err) throw err;
-    console.log("connected as id " + connection.threadId);
-    placeOrder();
-;   connection.end();
-    // songsBy(artist);
+    // console.log("connected as id " + connection.threadId);
+    startOrder();
   });
 
+function startOrder() {
+    console.log(`\n`);
+    inquirer
+        .prompt(
+            {
+                name: "start",
+                type: "list",
+                message: "Welcome to Bamazon. How may I help you?",
+                choices: ["BUY", "EXIT"]
+            }
+        )
+        .then(function(answer){
+            if (answer.start === "BUY") {
+                placeOrder();
+            }
+            else {
+                console.log(`No problem, please come back again !`)
+                connection.end();
+            }
+
+
+        });
+}
+   
+function placeAnotherOrder() {
+    console.log(`\n`);
+    inquirer
+        .prompt(
+            {
+                name: "new_order",
+                type: "list",
+                message: "Would you like to BUY another item?",
+                choices: function() {
+                    var choiceArray =[]
+                    if (currentBasket.length === 0) {
+                        choiceArray = ["BUY", "EXIT"];
+                    }
+                    else {
+                        choiceArray = ["BUY", "CHECKOUT", "EXIT"];
+                    }
+                    return choiceArray;
+                    
+                }
+            }
+        )
+        .then(function(answer){
+            if (answer.new_order === "BUY") {
+                placeOrder();
+            }
+            else if (answer.new_order == "CHECKOUT") {
+                console.log(`Thank you for shopping at Bamazon! Your order is currently processing.`)
+                console.log(`A total of ${total} has been charged to your American Express ending in 0000.`);
+                connection.end();
+            }
+            else {
+                console.log(`No problem, have a great day!`)
+                connection.end();
+            }
+
+
+        })
+
+}
+
+function basketCalculator(currentBasket) {
+    basket = currentBasket.join('\n');
+    console.log(`\nYour current total is $${total}.`)
+    console.log(`---------------------------------`);
+    console.log(`\n`);
+    console.log(basket);
+    // console.log(`\n`);
+}
+
+function nsfOrder() {
+    console.log(`\n`);
+    console.log(`Your order exceeds our current on-hand quanity. Please enter a number less than or equal to ${chosenItem.stock_quantity}.`);
+    inquirer
+        .prompt({
+            name: "quantity",
+            type: "input",
+            message: "\nHow many would you like to buy?"
+        })
+        .then(function(answer){
+            units = answer.quantity;
+
+            if (chosenItem.stock_quantity >= answer.quantity) {
+                difference = chosenItem.stock_quantity - answer.quantity;
+                
+                connection.query(
+                    "UPDATE products SET ? WHERE ?",
+                    [
+                    {
+                        stock_quantity: difference,
+                    },
+                    {
+                        item_id: chosenItem.item_id
+                    }
+                    ],
+                    function(error, res) {
+                        if (error) throw error;
+                        purchaseTotal = parseFloat(answer.quantity)*chosenItem.price;
+                        total += purchaseTotal;
+                        currentPurchase = `$${purchaseTotal} - ${answer.quantity} x ${chosenItem.product_name}`;
+                        currentBasket.push(currentPurchase);
+                        console.log(`\nI've added ${answer.quantity} units to your cart!`);
+                        basketCalculator(currentBasket);        
+                        placeAnotherOrder();
+
+                    }
+                );
+            }
+
+        });
+}
+
 function placeOrder() {
-    products = [];
+    console.log(`\n`);
     connection.query("SELECT * FROM products", function(err, res) {
-    //   for (var i = 0; i < res.length; i++) {
-    //     products.push(
-    //         res[i].item_id + " | " + 
-    //         res[i].product_name + " | " + 
-    //         res[i].department_name + " | " + 
-    //         res[i].price + " | " + res[i].stock_quantity
-    //     );
-    //   }
-    //   console.log(products);
+    
     inquirer
     .prompt({
         name: "order",
@@ -69,45 +162,59 @@ function placeOrder() {
         message: "How many would you like to buy?"
     })
     .then(function(answer) {
-        // based on their answer, either call the bid or the post functions
-        // chosenItem;
         for (var i = 0; i < res.length; i++) {
             if (res[i].product_name === answer.order) {
               chosenItem = res[i];
             }
         }
-        console.log(chosenItem);
-        inquirer
-            .prompt({
-                name: "quantity",
-                type: "input",
-                message: "How many would you like to buy?"
-            })
-            .then(function(answer) {
-                console.log(chosenItem.stock_quantity);
-                
-                if (chosenItem.stock_quantity >= answer.quantity) {
-                    difference = chosenItem.stock_quantity - answer.quantity;
-                    // console.log(parseFloat(chosenItem.price));
-                    connection.query(
-                        "UPDATE products SET ? WHERE ?",
-                        [
-                          {
-                            stock_quantity: difference,
-                          },
-                          {
-                            id: chosenItem.id
-                          }
-                        ],
-                        function(error, res) {
+        // console.log(chosenItem);
+        if ((chosenItem.stock_quantity == 0)) {
+            console.log(`\n`);
+            console.log(`We apologize for the inconvenience, but we have sold out of ${chosenItem.product_name}.`);
+            placeAnotherOrder();
+        }
+        else {
+            console.log(`\n`);
+            inquirer
+                .prompt({
+                    name: "quantity",
+                    type: "input",
+                    message: "How many would you like to buy?"
+                })
+                .then(function(answer) {
+                    units = answer.quantity;
 
-                            total = parseFloat(answer.quantity)*chosenItem.price;
-                            console.log(`Thank you for order! You're total is ${total}`);
-                        }
-                      );
-                    
-                }                
-            })
+                    if (chosenItem.stock_quantity >= answer.quantity) {
+                        difference = chosenItem.stock_quantity - answer.quantity;
+                        
+                        connection.query(
+                            "UPDATE products SET ? WHERE ?",
+                            [
+                            {
+                                stock_quantity: difference,
+                            },
+                            {
+                                item_id: chosenItem.item_id
+                            }
+                            ],
+                            function(error, res) {
+                                if (error) throw error;
+                                purchaseTotal = parseFloat(answer.quantity)*chosenItem.price;
+                                total += purchaseTotal;
+                                currentPurchase = `$${purchaseTotal} - ${answer.quantity} x ${chosenItem.product_name}`;
+                                currentBasket.push(currentPurchase);
+                                console.log(`\nI've added ${answer.quantity} units to your cart!`);
+                                basketCalculator(currentBasket);        
+                                placeAnotherOrder();
+
+                            }
+                        );
+                    }
+                    else {
+                        nsfOrder();
+                    }                
+                })
+            }
  
     });
 
