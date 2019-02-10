@@ -4,6 +4,7 @@ const inquirer = require('inquirer');
 var currentBasket = [];
 var total = 0;
 
+
 var connection = mysql.createConnection({
     host: "localhost",
   
@@ -31,7 +32,7 @@ function startOrder() {
             {
                 name: "start",
                 type: "list",
-                message: "Welcome to Bamazon. How may I help you?",
+                message: "Welcome to Bamazon, your #1 source for books & music. How may I help you?",
                 choices: ["BUY", "EXIT"]
             }
         )
@@ -104,7 +105,7 @@ function nsfOrder() {
         .prompt({
             name: "quantity",
             type: "input",
-            message: "\nHow many would you like to buy?"
+            message: "How many would you like to buy?"
         })
         .then(function(answer){
             units = answer.quantity;
@@ -155,12 +156,8 @@ function placeOrder() {
             return choiceArray;
           },
         message: "What would you like to buy?",
-    },
-    {
-        name: "choice",
-        type: "input",
-        message: "How many would you like to buy?"
     })
+   
     .then(function(answer) {
         for (var i = 0; i < res.length; i++) {
             if (res[i].product_name === answer.order) {
