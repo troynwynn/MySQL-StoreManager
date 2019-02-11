@@ -76,7 +76,7 @@ function placeAnotherOrder() {
             else if (answer.new_order == "CHECKOUT") {
                 console.log('\n');
                 console.log(`Thank you for shopping at Bamazon! Your order is currently processing.`)
-                console.log(`A total of $${total} has been charged to your American Express ending in 0000.`);
+                console.log(`A total of $${total.toFixed(2)} has been charged to your American Express ending in 0000.`);
                 console.log('\n');
                 connection.end();
             }

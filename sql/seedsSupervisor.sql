@@ -1,7 +1,7 @@
 USE bamazon;
 
 INSERT INTO departments (department_name, overhead_costs) 
-VALUES ("music", 20000);
+VALUES ("music", 1000);
 
 INSERT INTO departments (department_name, overhead_costs) 
-VALUES ("books",13000);
+VALUES ("books",2000);
