@@ -202,9 +202,6 @@ function addProduct() {
     connection.query( "SELECT * FROM departments", function(err, res) {  
 
         
-
-    // console.log(logDeparments());
-
     inquirer 
         .prompt([{
             name: "product_name",

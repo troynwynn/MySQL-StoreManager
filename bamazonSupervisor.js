@@ -21,7 +21,6 @@ var connection = mysql.createConnection({
   
   connection.connect(function(err) {
     if (err) throw err;
-    // viewDepartments();
     checkDepartments();
   });
 
@@ -72,8 +71,6 @@ function addDepartment() {
         for (let i=0; i < res.length; i++) {
             choiceArray.push(`${res[i].department_name}`);
         }
-        // return choiceArray;
-    
     
         inquirer 
         .prompt([{

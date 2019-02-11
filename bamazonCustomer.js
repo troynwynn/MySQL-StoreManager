@@ -21,7 +21,6 @@ var connection = mysql.createConnection({
   
   connection.connect(function(err) {
     if (err) throw err;
-    // console.log("connected as id " + connection.threadId);
     startOrder();
   });
 
@@ -96,7 +95,6 @@ function basketCalculator(currentBasket) {
     console.log(`---------------------------------`);
     console.log(`\n`);
     console.log(basket);
-    // console.log(`\n`);
 }
 
 function nsfOrder() {
@@ -172,7 +170,6 @@ function placeOrder() {
               chosenItem = res[i];
             }
         }
-        // console.log(chosenItem);
         if ((chosenItem.stock_quantity == 0)) {
             console.log(`\n`);
             console.log(`We apologize for the inconvenience, but we have sold out of ${chosenItem.product_name}.`);
@@ -229,7 +226,7 @@ function placeOrder() {
                 })
             }
  
-    });
+     });
 
 
 
