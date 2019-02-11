@@ -17,7 +17,6 @@ A CLI (Command-Line Interface) application with a "store-front" for customers an
 
 ## Command Line Calls
 
-To start the game:
 ```
 node bamazonCustomer.js
 node bamazonManager.js
