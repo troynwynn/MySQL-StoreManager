@@ -10,8 +10,8 @@ A CLI (Command-Line Interface) application with a "store-front" for customers an
 
 ## Required Files
 * `bamazonCustomer.js` - serves as the "store-front" for customers, where available items can be purchased at checkout
-* `bamazonManager.js` - allows the manager to VIEW INVENTORY, VIEW LOW IN-STOCKS, ADD TO INVENTORY EXISTING, & ADD NEW PRODUCTS
-* `bamazonSupervisor.js` - allows the supervisor to VIEW DEPARTMENTAL SALES  & ADD NEW DEPARTMENTS
+* `bamazonManager.js` - allows the manager to 'VIEW INVENTORY', 'VIEW LOW IN-STOCKS', 'ADD TO EXISTING INVENTORY', & 'ADD NEW PRODUCTS'
+* `bamazonSupervisor.js` - allows the supervisor to 'VIEW DEPARTMENTAL SALES'  & 'ADD NEW DEPARTMENTS'
 * `MySQL schemas` - creates/saves *bamazon* database, creates/saves *products* and *departments* table schematics, 
 * `MySQL seeds`- inserts inventory and departments into *products* and *departments* tables
 
