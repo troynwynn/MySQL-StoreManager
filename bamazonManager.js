@@ -62,11 +62,10 @@ function viewInventory(){
     connection.query( "SELECT * FROM products", function(err, res) {
         if (err) throw err;
         for (let i=0; i < res.length; i++) {
-            inventory.push(`${res[i].item_id}. ${res[i].product_name}, Deparment: ${res[i].department_name}, Price: ${res[i].price}, Quantity: ${res[i].stock_quantity}`);
+            inventory.push(`${res[i].item_id}. ${res[i].product_name}, Deparment: ${res[i].department_name}, Price: ${res[i].price}, Quantity: ${res[i].stock_quantity}, Product Sales: $${res[i].product_sales} `);
         }
         console.log('\n');
         console.log(inventory.join('\n'));
-        console.log('\n');
         checkInventory();
         
     });
@@ -79,7 +78,7 @@ function viewLows(){
         if (err) throw err;
         for (let i=0; i < res.length; i++) {
             if (res[i].stock_quantity <= 5) {
-                lows.push(`${res[i].item_id}. ${res[i].product_name}, Deparment: ${res[i].department_name}, Price: ${res[i].price}, Quantity: ${res[i].stock_quantity}`);
+                lows.push(`${res[i].item_id}. ${res[i].product_name}, Deparment: ${res[i].department_name}, Price: ${res[i].price}, Quantity: ${res[i].stock_quantity}, Product Sales: $${res[i].product_sales} `);
             } 
         }
         console.log('\n');
@@ -104,7 +103,7 @@ function addInventory() {
             choices: function() {
                 var choiceArray = [];   
                 for (let i=0; i < res.length; i++) {
-                    choiceArray.push(`${res[i].item_id}. ${res[i].product_name}, Deparment: ${res[i].department_name}, Price: ${res[i].price}, Quantity: ${res[i].stock_quantity}`);
+                    choiceArray.push(`${res[i].item_id}. ${res[i].product_name}, Deparment: ${res[i].department_name}, Price: ${res[i].price}, Quantity: ${res[i].stock_quantity}, Product Sales: $${res[i].product_sales}`);
                     
                 }
                 return choiceArray;
@@ -200,17 +199,29 @@ function nsfQuantity() {
 
 function addProduct() {
     console.log(`\n`);
+    connection.query( "SELECT * FROM departments", function(err, res) {  
+
+        
+
+    // console.log(logDeparments());
 
     inquirer 
         .prompt([{
             name: "product_name",
             type: "input",
-            message: "Please enter [ 'BOOK NAME - AUTHOR' or 'DISC NAME - ARTIST(S)' ] : "
+            message: "Please enter [ '(EX) BOOK NAME - AUTHOR' or 'DISC NAME - ARTIST(S)' ] : "
         },
         {
             name: "department_name",
             type: "list",
-            choices: [`music`, `books`]
+            choices: function() {
+                var choiceArray = []; 
+                for (let i=0; i < res.length; i++) {
+                    choiceArray.push(`${res[i].department_name}`);
+                }
+                return choiceArray;
+            }
+        
         },
         {
             name: "price",
@@ -242,19 +253,20 @@ function addProduct() {
                   product_name: answers.product_name,
                   department_name: answers.department_name,
                   price: answers.price,
-                  stock_quantity: answers.stock_quantity
+                  stock_quantity: answers.stock_quantity,
+                  product_sales: 0
                 },
                 function(err, res) {
                     console.log(`\n`);
                     console.log(`TASK COMPLETE`);
                     console.log(`\n`);
-                    console.log(`NEW PRODUCT ALERT: ${answers.product_name}, Department: ${answers.department_name}, Price: ${answers.price}, Quantity: ${answers.stock_quantity}`);
+                    console.log(`NEW PRODUCT ALERT: ${answers.product_name}, Department: ${answers.department_name}, Price: ${answers.price}, Quantity: ${answers.stock_quantity}, Product Sales: $0 `);
                     checkInventory();
                 }
               );
         })
+    })
     
-
 
 }
 

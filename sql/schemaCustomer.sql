@@ -14,6 +14,8 @@
 
 --    * stock_quantity (how much of the product is available in stores)
 
+--    * Modify the products table so that there's a product_sales column
+
 DROP DATABASE IF EXISTS bamazon;
 
 CREATE DATABASE bamazon;
@@ -26,5 +28,6 @@ CREATE TABLE products (
   department_name VARCHAR(45) NULL,
   price decimal(10, 4) NULL,
   stock_quantity INT NOT NULL,
+  product_sales decimal(10, 4) NULL,
   PRIMARY KEY (item_id)
   );

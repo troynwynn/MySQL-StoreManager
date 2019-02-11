@@ -33,11 +33,11 @@ function startOrder() {
                 name: "start",
                 type: "list",
                 message: "Welcome to Bamazon, your #1 source for books & music. How may I help you?",
-                choices: ["BUY", "EXIT"]
+                choices: ["START SHOPPING", "EXIT"]
             }
         )
         .then(function(answer){
-            if (answer.start === "BUY") {
+            if (answer.start === "START SHOPPING") {
                 placeOrder();
             }
             else {
@@ -56,14 +56,14 @@ function placeAnotherOrder() {
             {
                 name: "new_order",
                 type: "list",
-                message: "Would you like to BUY another item?",
+                message: "Would you like to CONTINUE SHOPPING?",
                 choices: function() {
                     var choiceArray =[]
                     if (currentBasket.length === 0) {
-                        choiceArray = ["BUY", "EXIT"];
+                        choiceArray = ["CONTINUE SHOPPING", "EXIT"];
                     }
                     else {
-                        choiceArray = ["BUY", "CHECKOUT", "EXIT"];
+                        choiceArray = ["CONTINUE SHOPPING", "CHECKOUT", "EXIT"];
                     }
                     return choiceArray;
                     
@@ -71,12 +71,14 @@ function placeAnotherOrder() {
             }
         )
         .then(function(answer){
-            if (answer.new_order === "BUY") {
+            if (answer.new_order === "CONTINUE SHOPPING") {
                 placeOrder();
             }
             else if (answer.new_order == "CHECKOUT") {
+                console.log('\n');
                 console.log(`Thank you for shopping at Bamazon! Your order is currently processing.`)
-                console.log(`A total of ${total} has been charged to your American Express ending in 0000.`);
+                console.log(`A total of $${total} has been charged to your American Express ending in 0000.`);
+                console.log('\n');
                 connection.end();
             }
             else {
@@ -84,14 +86,13 @@ function placeAnotherOrder() {
                 connection.end();
             }
 
-
         })
 
 }
 
 function basketCalculator(currentBasket) {
     basket = currentBasket.join('\n');
-    console.log(`\nYour current total is $${total}.`)
+    console.log(`\nYour current total is $${total.toFixed(2)}.`)
     console.log(`---------------------------------`);
     console.log(`\n`);
     console.log(basket);
@@ -105,19 +106,27 @@ function nsfOrder() {
         .prompt({
             name: "quantity",
             type: "input",
-            message: "How many would you like to buy?"
+            message: "How many would you like to buy?",
+            validate: function(value) {
+                if (isNaN(parseInt(value)) === false) {
+                  return true;
+                }
+                return false;
+            }
         })
         .then(function(answer){
             units = answer.quantity;
 
             if (chosenItem.stock_quantity >= answer.quantity) {
                 difference = chosenItem.stock_quantity - answer.quantity;
-                
+                purchaseTotal = parseFloat(answer.quantity)*chosenItem.price;
+                updatedSales = chosenItem.product_sales + purchaseTotal;
                 connection.query(
                     "UPDATE products SET ? WHERE ?",
                     [
                     {
                         stock_quantity: difference,
+                        product_sales: updatedSales
                     },
                     {
                         item_id: chosenItem.item_id
@@ -125,7 +134,6 @@ function nsfOrder() {
                     ],
                     function(error, res) {
                         if (error) throw error;
-                        purchaseTotal = parseFloat(answer.quantity)*chosenItem.price;
                         total += purchaseTotal;
                         currentPurchase = `$${purchaseTotal} - ${answer.quantity} x ${chosenItem.product_name}`;
                         currentBasket.push(currentPurchase);
@@ -176,19 +184,28 @@ function placeOrder() {
                 .prompt({
                     name: "quantity",
                     type: "input",
-                    message: "How many would you like to buy?"
+                    message: "How many would you like to buy?",
+                    validate: function(value) {
+                        if (isNaN(parseInt(value)) === false) {
+                          return true;
+                        }
+                        return false;
+                    }
                 })
                 .then(function(answer) {
                     units = answer.quantity;
 
                     if (chosenItem.stock_quantity >= answer.quantity) {
                         difference = chosenItem.stock_quantity - answer.quantity;
-                        
+                        purchaseTotal = parseFloat(answer.quantity)*chosenItem.price;
+                        updatedSales = chosenItem.product_sales + purchaseTotal;
+
                         connection.query(
                             "UPDATE products SET ? WHERE ?",
                             [
                             {
                                 stock_quantity: difference,
+                                product_sales: updatedSales
                             },
                             {
                                 item_id: chosenItem.item_id
@@ -196,7 +213,6 @@ function placeOrder() {
                             ],
                             function(error, res) {
                                 if (error) throw error;
-                                purchaseTotal = parseFloat(answer.quantity)*chosenItem.price;
                                 total += purchaseTotal;
                                 currentPurchase = `$${purchaseTotal} - ${answer.quantity} x ${chosenItem.product_name}`;
                                 currentBasket.push(currentPurchase);
