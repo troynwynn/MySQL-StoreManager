@@ -27,7 +27,7 @@ node bamazonSupervisor.js
 ## Folder Tree
 
 ```
-├── _javascript
+├── javascript
     ├── bamazonCustomer.js
     ├── bamazonManager.js
     └── bamazonSupervisor.js
