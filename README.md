@@ -1,4 +1,4 @@
-# Bamazon Store Manager
+# MySQL Store Manager
 
 ## Introduction
 A CLI (Command-Line Interface) application with a "store-front" for customers and an inventory management system for managers and supervisors to check inventory and store sales. As customers make purchases, the inventory management system updates after each transaction.
